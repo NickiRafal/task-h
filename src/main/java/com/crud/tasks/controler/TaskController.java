@@ -24,7 +24,6 @@ public class TaskController {
     public void deleteTask( @PathVariable Long taskId) {
 
     }
-
     @PutMapping("/{taskId}")
     public TaskDto updateTask(@RequestBody TaskDto taskDto) {
 
