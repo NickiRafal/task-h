@@ -2,21 +2,14 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.11'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-	//id 'war'
+	// id 'war'
 }
 
 group = 'com.crud'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '8'
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-
+	sourceCompatibility = '17'
 }
 
 repositories {
@@ -33,13 +26,13 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 }
 
-
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
 jar {
 	enabled = true
 	manifest {
-		attributes 'Main-Class':'com.crud.tasks.TasksApplication'
+		attributes 'Main-Class': 'com.crud.tasks.TasksApplication'
 	}
 }
