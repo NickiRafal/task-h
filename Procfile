@@ -1,1 +1,1 @@
-web: java -jar target/java-getting-started-tasks-1.0.0-SNAPSHOT.jar
+web: java -jar build/libs/tasks-1.0.0-SNAPSHOT.jar
