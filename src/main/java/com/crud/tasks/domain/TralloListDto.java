@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TralloListDto {
@@ -13,4 +15,6 @@ public class TralloListDto {
     private String name;
     @JsonProperty("closed")
     private boolean isClosed;
+    @JsonProperty("lists")
+    private List <TralloListDto> lists;
 }
