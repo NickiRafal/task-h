@@ -6,25 +6,25 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
+import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CreatedTrelloCard {
+@AllArgsConstructor
+@NoArgsConstructor
+public class TrelloListDto {
     @JsonProperty("id")
     private String id;
     @JsonProperty("name")
     private String name;
-    @JsonProperty ("shortUrl")
-    private String shortUrl;
-    @JsonProperty("badges")
-    private Map<String, Object> badges;
+    @JsonProperty("closed")
+    private boolean isClosed;
+    @JsonProperty("lists")
+    private List <TrelloListDto> lists;
 
-    public CreatedTrelloCard(String id, String name, String shortUrl) {
+    public TrelloListDto(String id, String name, boolean isClosed) {
         this.id = id;
         this.name = name;
-        this.shortUrl = shortUrl;
+        this.isClosed = isClosed;
     }
 }
