@@ -6,12 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
 public class TrelloValidator {
-    private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(TrelloValidator.class);
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TrelloValidator.class);
+
 
     public void validateCard(final TrelloCard trelloCard) {
         if (trelloCard.getName().contains("test")) {
