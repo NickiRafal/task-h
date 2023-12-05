@@ -4,102 +4,104 @@ import com.crud.tasks.domain.Task;
 import com.crud.tasks.domain.TaskDto;
 import com.crud.tasks.mapper.TaskMapper;
 import com.crud.tasks.service.DbService;
-import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+@SpringJUnitWebConfig
+@WebMvcTest(TaskController.class)
+public class TaskControllerTest {
 
-class TaskControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Mock
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
     private DbService dbService;
 
-    @Mock
+    @MockBean
     private TaskMapper taskMapper;
 
-    @InjectMocks
-    private TaskController taskController;
-
-    private Task task;
-    private TaskDto taskDto;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
-    void getTasks_ReturnsListOfTasks() {
-        // Given
-        List<Task> tasks = Collections.singletonList(task);
-        when(dbService.getAllTasks()).thenReturn(tasks);
-        when(taskMapper.mapToTaskDtoList(tasks)).thenReturn(Collections.singletonList(taskDto));
+    void getTask() throws Exception {
+        // given
+        Task task = new Task(1L, "Test Task", "Test Description");
+        TaskDto taskDto = new TaskDto(1L, "Test Task", "Test Description");
 
-        // When
-        ResponseEntity<List<TaskDto>> response = taskController.getTasks();
-
-        // Then
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(1, response.getBody().size());
-    }
-
-    @Test
-    void getTask_WithValidId_ReturnsTask() throws TaskNotFoundException {
-        // Given
-        when(dbService.getTask(1L)).thenReturn(task);
+        // when
+        when(dbService.getTask(anyLong())).thenReturn(task);
         when(taskMapper.mapToTaskDto(task)).thenReturn(taskDto);
 
-        // When
-        ResponseEntity<TaskDto> response = taskController.getTask(1L);
-
-        // Then
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(taskDto, response.getBody());
+        // then
+        mockMvc.perform(get("/v1/tasks/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Test Task"))
+                .andExpect(jsonPath("$.content").value("Test Description"));
     }
 
     @Test
-    void deleteTask_WithValidId_DeletesTask() {
-        // When
-        ResponseEntity<Void> response = taskController.deleteTask(1L);
+    void deleteTask() throws Exception {
+        // given
+        doNothing().when(dbService).deleteTask(anyLong());
 
-        // Then
-        assertEquals(200, response.getStatusCodeValue());
+        // then
+        mockMvc.perform(delete("/v1/tasks/1"))
+                .andExpect(status().isOk());
+
         verify(dbService, times(1)).deleteTask(1L);
     }
 
     @Test
-    void updateTask_WithValidTaskDto_UpdatesTask() {
-        // Given
-        when(taskMapper.mapToTask(taskDto)).thenReturn(task);
-        when(dbService.saveTask(task)).thenReturn(task);
+    void updateTask() throws Exception {
+        // given
+        TaskDto taskDto = new TaskDto(1L, "Updated Task", "Updated Description");
+        Task task = new Task(1L, "Updated Task", "Updated Description");
 
-        // When
-        ResponseEntity<TaskDto> response = taskController.updateTask(taskDto);
+        // when
+        when(taskMapper.mapToTask(any(TaskDto.class))).thenReturn(task);
+        when(dbService.saveTask(any(Task.class))).thenReturn(task);
+        when(taskMapper.mapToTaskDto(task)).thenReturn(taskDto);
 
-        // Then
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(taskDto, response.getBody());
+        // then
+        mockMvc.perform(put("/v1/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(taskDto)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Updated Task"))
+                .andExpect(jsonPath("$.content").value("Updated Description"));
     }
 
     @Test
-    void createTask_WithValidTaskDto_CreatesTask() {
-        // Given
-        when(taskMapper.mapToTask(taskDto)).thenReturn(task);
-        when(dbService.saveTask(task)).thenReturn(task);
+    void createTask() throws Exception {
+        // given
+        TaskDto taskDto = new TaskDto(1L, "New Task", "New Description");
+        Task task = new Task(1L, "New Task", "New Description");
 
-        // When
-        ResponseEntity<Void> response = taskController.createTask(taskDto);
+        // when
+        when(taskMapper.mapToTask(any(TaskDto.class))).thenReturn(task);
+        when(dbService.saveTask(any(Task.class))).thenReturn(task);
 
-        // Then
-        assertEquals(200, response.getStatusCodeValue());
+        // then
+        mockMvc.perform(post("/v1/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(taskDto)))
+                .andExpect(status().isOk());
     }
 }
-
