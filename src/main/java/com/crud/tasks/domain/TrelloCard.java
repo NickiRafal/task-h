@@ -10,4 +10,9 @@ public class TrelloCard {
     private String description;
     private String pos;
     private String listId;
+
+    public TrelloCard(String name) {
+        this.name = name;
+    }
 }
+

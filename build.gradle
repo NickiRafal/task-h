@@ -9,7 +9,7 @@ group = 'com.crud'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '1.8'
+	sourceCompatibility = "1.9"
 }
 
 repositories {
@@ -39,3 +39,4 @@ jar {
 		attributes 'Main-Class': 'com.crud.tasks.TasksApplication'
 	}
 }
+targetCompatibility = JavaVersion.VERSION_1_9
