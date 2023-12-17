@@ -16,13 +16,13 @@ public class EmailScheduler {
     private final SimpleEmailService simpleEmailService;
     private final TaskRepository taskRepository;
     private final AdminConfig adminConfig;
-
+    //@Scheduled(fixedRate = 10000)
     @Scheduled(cron = "0 0 10 * * *")
     public void sendInformationEmail() {
 
         long size = taskRepository.count();
         String infosize =(size>1) ? "tasks" : "task";
-        simpleEmailService.send(
+        simpleEmailService.sendInfo(
                 new Mail(
                         adminConfig.getAdminMail(),
                         SUBJECT,

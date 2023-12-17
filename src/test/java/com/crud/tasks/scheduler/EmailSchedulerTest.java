@@ -41,8 +41,8 @@ class EmailSchedulerTest {
         emailScheduler.sendInformationEmail();
 
         // Then
-        verify(emailService, times(1)).send(any(Mail.class));
-        verify(emailService, times(1)).send(argThat(mail -> mail.getMailTo().equals("admin@test.com")
+        verify(emailService, times(1)).sendInfo(any(Mail.class));
+        verify(emailService, times(1)).sendInfo(argThat(mail -> mail.getMailTo().equals("admin@test.com")
                 && mail.getSubject().equals("Tasks: Once a day email")
                 && mail.getMessage().contains("Currently in database you got: 1 task")));
     }
@@ -57,8 +57,8 @@ class EmailSchedulerTest {
         emailScheduler.sendInformationEmail();
 
         // Then
-        verify(emailService, times(1)).send(any(Mail.class));
-        verify(emailService, times(1)).send(argThat(mail -> mail.getMailTo().equals("admin@test.com")
+        verify(emailService, times(1)).sendInfo(any(Mail.class));
+        verify(emailService, times(1)).sendInfo(argThat(mail -> mail.getMailTo().equals("admin@test.com")
                 && mail.getSubject().equals("Tasks: Once a day email")
                 && mail.getMessage().contains("Currently in database you got: 5 tasks")));
     }
